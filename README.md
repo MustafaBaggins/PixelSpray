@@ -1,6 +1,6 @@
 # PixelSpray ![Version](https://img.shields.io/github/v/release/MustafaBaggins/PixelSpray?style=plastic&label=Version&color=dc3e3e) ![Downloads](https://img.shields.io/github/downloads/MustafaBaggins/PixelSpray/total?style=plastic&label=Downloads&color=50f63f)
 
-Allows players display images from URLs as in-game. It converts images into a format that can be rendered using the spawntoy text command mechanism.
+Allows players display images from URLs as in-game. It converts images into a format that can be rendered using Admin Toys.
 
 ## Permissions:
 
