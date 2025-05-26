@@ -1,19 +1,17 @@
-﻿using System;
+﻿using Exiled.API.Features;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Exiled.API.Features;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 
-namespace PixelSpray
+namespace PixelSpray.Features
 {
     public class AsciiArtConverter
     {
-        
-        private int DefaultImageWidth = Class1.Instance.Config.DefaultImageWidth;
         private static readonly List<string> DefaultHtmlCharacter = new List<string> { "█" };
         private const string BrowserTypeForAspectRatio = "other";
         private const int GrayscaleMode = 0;
@@ -36,21 +34,21 @@ namespace PixelSpray
         public async Task<string> ProcessImageFromUrlAsync(string imageUrl)
         {
             byte[] imageBytes;
-           
+
             using (var httpClient = new HttpClient())
             {
                 httpClient.Timeout = TimeSpan.FromSeconds(20);
                 imageBytes = await httpClient.GetByteArrayAsync(imageUrl).ConfigureAwait(false);
             }
-            
+
             string rawHtmlOutput = ConvertImageToHtml(imageBytes);
             if (string.IsNullOrEmpty(rawHtmlOutput))
                 throw new Exception("C# based converter did not produce output.");
-            
 
-            
+
+
             string finalResult = FormatHtmlOutput(rawHtmlOutput);
-            
+
             return finalResult;
         }
 
@@ -61,7 +59,7 @@ namespace PixelSpray
             Image<Rgba32> image;
             try
             {
-                image = SixLabors.ImageSharp.Image.Load<Rgba32>(imageData);
+                image = Image.Load<Rgba32>(imageData);
             }
             catch (Exception ex)
             {
@@ -76,12 +74,12 @@ namespace PixelSpray
                 if (originalWidth == 0 || originalHeight == 0)
                     throw new InvalidOperationException("The width or height of the image cannot be zero.");
 
-                int newHeightBasedOnWidth = (int)Math.Round((double)originalHeight * DefaultImageWidth / originalWidth);
+                int newHeightBasedOnWidth = (int)Math.Round((double)originalHeight * PixelSprayPlugin.Instance.Config.DefaultImageWidth / originalWidth);
                 if (newHeightBasedOnWidth == 0 && originalHeight > 0) newHeightBasedOnWidth = 1;
 
-                image.Mutate(x => x.Resize(DefaultImageWidth, newHeightBasedOnWidth == 0 ? 1 : newHeightBasedOnWidth));
+                image.Mutate(x => x.Resize(PixelSprayPlugin.Instance.Config.DefaultImageWidth, newHeightBasedOnWidth == 0 ? 1 : newHeightBasedOnWidth));
 
-                double aspectRatioScaleY = (BrowserTypeForAspectRatio == "ie") ? 0.65 : 0.43;
+                double aspectRatioScaleY = BrowserTypeForAspectRatio == "ie" ? 0.65 : 0.43;
                 int finalHeight = (int)Math.Round(image.Height * aspectRatioScaleY);
                 if (finalHeight == 0 && image.Height > 0) finalHeight = 1;
 
@@ -89,7 +87,7 @@ namespace PixelSpray
                     image.Mutate(x => x.Resize(image.Width, finalHeight));
                 else if (finalHeight == 0)
                 {
-                    
+
                     image.Mutate(x => x.Resize(image.Width, 1));
                 }
 

@@ -1,14 +1,16 @@
-﻿using System;
-using Exiled.API.Features;
+﻿using Exiled.API.Features;
+using PixelSpray.Configuration;
+using System;
+
 namespace PixelSpray
 {
-    public class Class1 : Plugin<Config, Translations>
+    public class PixelSprayPlugin : Plugin<Config, Translation>
     {
         public override string Author => "Baggins(@haci33)";
         public override string Name => "PixelSpray";
         public override Version Version => new Version(1, 0, 0);
 
-        public static Class1 Instance;
+        public static PixelSprayPlugin Instance;
         public override void OnEnabled()
         {
             Instance = this;
