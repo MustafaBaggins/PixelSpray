@@ -12,22 +12,28 @@
 
 	<ItemGroup>
 		<Reference Include="Assembly-CSharp-firstpass">
-		  <HintPath>..\..\..\..\Documents\Exiled Snippets\Master\Assembly-CSharp-firstpass.dll</HintPath>
+		  <HintPath>$(EXILED_REFERENCES)\Assembly-CSharp-firstpass.dll</HintPath>
+		</Reference>
+		<Reference Include="Assembly-CSharp">
+		  <HintPath>..\..\..\..\Documents\Exiled Snippets\Master\Assembly-CSharp-Publicized.dll</HintPath>
+		</Reference>
+		<Reference Include="Assembly-CSharp">
+		  <HintPath>..\..\..\..\Documents\Exiled Snippets\Master\Assembly-CSharp-Publicized.dll</HintPath>
 		</Reference>
 		<Reference Include="Mirror">
-		  <HintPath>..\..\..\..\Documents\Exiled Snippets\Master\Mirror.dll</HintPath>
+		  <HintPath>$(EXILED_REFERENCES)\Mirror.dll</HintPath>
 		</Reference>
 		<Reference Include="System.Net.Http">
 			<HintPath>$(EXILED_REFERENCES)\System.Net.Http.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine">
-		  <HintPath>..\..\..\..\Documents\Exiled Snippets\Master\UnityEngine.dll</HintPath>
+		  <HintPath>$(EXILED_REFERENCES)\UnityEngine.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.CoreModule">
-		  <HintPath>..\..\..\..\Documents\Exiled Snippets\Master\UnityEngine.CoreModule.dll</HintPath>
+		  <HintPath>$(EXILED_REFERENCES)\UnityEngine.CoreModule.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.PhysicsModule">
-		  <HintPath>..\..\..\..\Documents\Exiled Snippets\Master\UnityEngine.PhysicsModule.dll</HintPath>
+		  <HintPath>$(EXILED_REFERENCES)\UnityEngine.PhysicsModule.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 	<ItemGroup>
