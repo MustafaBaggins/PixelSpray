@@ -19,7 +19,7 @@ namespace Callvote.Commands
 
         public override void LoadGeneratedCommands()
         {
-            RegisterCommand(new SpraySprayCommand());
+            RegisterCommand(new SprayCommand());
             RegisterCommand(new RemoveSprayCommand());
             RegisterCommand(new ListSprayCommand());
             RegisterCommand(new RespraySprayCommand());

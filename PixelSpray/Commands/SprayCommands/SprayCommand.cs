@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace PixelSpray.Commands.SprayCommands
 {
-    public class SpraySprayCommand : ICommand
+    public class SprayCommand : ICommand
     {
         public string Command { get; } = "spray";
         public string[] Aliases { get; } = { "grf", "s" };
