@@ -6,11 +6,11 @@
 
 # Installation
 
-  *Download the latest PixelSpray.dll from the [Releases](https://github.com/MustafaBaggins/PixelSpray/releases) page. (Replace with your actual link.)
-  *Download the  SixLabors.ImageSharp.dll from the [Releases](https://github.com/MustafaBaggins/PixelSpray/releases) page.
+  * Download the latest PixelSpray.dll from the [Releases](https://github.com/MustafaBaggins/PixelSpray/releases) page. (Replace with your actual link.)
+  * Download the  SixLabors.ImageSharp.dll from the [Releases](https://github.com/MustafaBaggins/PixelSpray/releases) page.
 
-  *Place the downloaded PixelSpray.dll file into your EXILED/Plugins folder.
-  *Place the downloaded SixLabors.ImageSharp.dll file into your EXILED/Plugins/dependencies folder.
+  * Place the downloaded PixelSpray.dll file into your EXILED/Plugins folder.
+  * Place the downloaded SixLabors.ImageSharp.dll file into your EXILED/Plugins/dependencies folder.
 
   *Restart your server.
 
