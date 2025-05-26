@@ -15,10 +15,7 @@
 		  <HintPath>$(EXILED_REFERENCES)\Assembly-CSharp-firstpass.dll</HintPath>
 		</Reference>
 		<Reference Include="Assembly-CSharp">
-		  <HintPath>..\..\..\..\Documents\Exiled Snippets\Master\Assembly-CSharp-Publicized.dll</HintPath>
-		</Reference>
-		<Reference Include="Assembly-CSharp">
-		  <HintPath>..\..\..\..\Documents\Exiled Snippets\Master\Assembly-CSharp-Publicized.dll</HintPath>
+		  <HintPath>$(EXILED_REFERENCES)\Assembly-CSharp.dll</HintPath>
 		</Reference>
 		<Reference Include="Mirror">
 		  <HintPath>$(EXILED_REFERENCES)\Mirror.dll</HintPath>
