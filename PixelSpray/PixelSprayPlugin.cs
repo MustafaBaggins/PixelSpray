@@ -8,7 +8,7 @@ namespace PixelSpray
     {
         public override string Author => "Baggins(@haci33)";
         public override string Name => "PixelSpray";
-        public override Version Version => new Version(1, 0, 0);
+        public override Version Version => new Version(0, 0, 2);
 
         public static PixelSprayPlugin Instance;
         public override void OnEnabled()
