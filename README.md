@@ -1,28 +1,32 @@
-# PixelSpray (EXILED)
+# PixelSpray ![Version](https://img.shields.io/github/v/release/MustafaBaggins/PixelSpray?style=plastic&label=Version&color=dc3e3e) ![Downloads](https://img.shields.io/github/downloads/MustafaBaggins/PixelSpray/total?style=plastic&label=Downloads&color=50f63f)
 
-  * This plugin allows players display images from URLs as in-game. It converts images into a format that can be rendered using the spawntoy text command mechanism.
+Allows players display images from URLs as in-game. It converts images into a format that can be rendered using the spawntoy text command mechanism.
 
-   * Since this is an early version, there may be some bugs or unexpected issues. Feedback and suggestions are always welcome!
+## Permissions:
 
-# Installation
+ Permission              | Command                         | Description                                                        
+-------------------------|---------------------------------|--------------------------------------------------------------------
+ pixelspray.spray        | pixelspray spray (Parameter)    | Allows players to use **pixelspray spray**          
+ pixelspray.remove       | pixelspray remove (Parameter)   | Allows players to use **pixelspray remove**       
+ pixelspray.list         | pixelspray list                 | Allows players to use **pixelspray list**    
 
-  * Download the latest PixelSpray.dll from the [Releases](https://github.com/MustafaBaggins/PixelSpray/releases) page.
-  * Download the  SixLabors.ImageSharp.dll from the [Releases](https://github.com/MustafaBaggins/PixelSpray/releases) page.
+## Commands:
 
-  * Place the downloaded PixelSpray.dll file into your EXILED/Plugins folder.
-  * Place the downloaded SixLabors.ImageSharp.dll file into your EXILED/Plugins/dependencies folder.
-
-  *Restart your server.
-
-# Usage
-
-   * Command: .spray <image_url>
-   * Example:
-   * .spray https://i.imgur.com/your_image.png
-
-  * Required Permission: pixel_spray_spray
+ Command               | Required Permission    | Parameters                                           | Description                              
+-----------------------|------------------------|------------------------------------------------------|------------------------------------------
+ pixelspray spray      | pixelspray.spray       | [label] [imageLink]                                  | Sprays a Spray with the specified label and text.   
+ pixelspray spray      | pixelspray.spray       | [label] [imageLink] [timer]                          | Sprays a temporary Spray.   
+ pixelspray respray    | pixelspray.spray       | [id]/[label]                                         | Spawns an already existing Spray by its ID or label.
+ pixelspray list       | pixelspray.list        | [none]                                               | Lists all currently spawned Spray.                 
+ pixelspray remove     | pixelspray.remove      | [id]/[label]/[player]/[all]                          | Removes a Spray by its ID, Label or Nickname.              
 
 
-Support
+## Download
 
-   * For any issues, questions, or suggestions, please open an issue on the [GitHub Issues page](Replace with your actual link) or contact me on Discord: Baggins(@haci33)
+This plugin requires [Exiled](https://github.com/ExSLMod-Team/EXILED/releases/tag/v9.6.0).
+
+You can download the latest version of PixelSpray and it's dependecies [here](https://github.com/MustafaBaggins/PixelSpray/releases).
+
+## Support
+
+   * For any issues, questions, or suggestions, please open an issue on the [GitHub Issues page](https://github.com/MustafaBaggins/PixelSpray/issues) or contact Unbistrackted/baggins on the official [Exiled Discord](https://discord.gg/dnKQFQXb5q)
