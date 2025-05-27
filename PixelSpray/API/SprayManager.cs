@@ -1,4 +1,5 @@
 ﻿using AdminToys;
+using Exiled.API.Features;
 using LabApi.Features.Wrappers;
 using MEC;
 using Mirror;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 using UnityEngine;
 using Utils.Networking;
@@ -22,70 +24,22 @@ namespace PixelSpray.API
 
         public async static Task AddPlayerSpray(Player player, string label, string imageUrl, Action<TextToy> callback)
         {
-            string image = string.Empty;
-            try
-            {
-                image = await ConvertImage(imageUrl);
-            }
-            catch (HttpRequestException httpEx)
-            {
-                Timing.CallDelayed(0f, () =>
-                {
-                    player?.SendConsoleMessage(string.Format(PixelSprayPlugin.Instance.Translation.ImageDownloadError, httpEx.Message?.ToString() ?? "Unknown"), "");
-                });
-                callback?.Invoke(null);
-                return;
-            }
-            catch (Exception)
-            {
-                callback?.Invoke(null);
-                return;
-            }
+            string image = await ConvertImage(imageUrl);
 
             if (image.IsEmpty())
             {
                 Timing.CallDelayed(0f, () =>
                 {
                     player?.SendConsoleMessage(PixelSprayPlugin.Instance.Translation.SprayGeneralError, "");
+                    callback?.Invoke(null);
+                    return;
                 });
-                callback?.Invoke(null);
-                return;
             }
 
-            TextToy textToy = null;
             Timing.CallDelayed(Timing.WaitForOneFrame, () =>
             {
-                foreach (GameObject value in NetworkClient.prefabs.Values)
-                {
-                    if (value.TryGetComponent<TextToy>(out textToy))
-                    {
-                        textToy = UnityEngine.Object.Instantiate(textToy);
-                        textToy.TextFormat = image;
-                        textToy.OnSpawned(player.ReferenceHub, new ArraySegment<string>(image.Split(' ')));
-                        player?.SendConsoleMessage(PixelSprayPlugin.Instance.Translation.SprayCommandSent, "");
-
-                        if (!PlayerSprays.ContainsKey(textToy.netId))
-                        {
-                            PlayerSprays[textToy.netId] = player;
-                        }
-
-                        int labelNameIndex = 0;
-
-                        while (SpraysLabel.ContainsKey(label))
-                        {
-                            labelNameIndex++;
-                            label = $"{label}({labelNameIndex})";
-                        }
-
-                        if (!SpraysLabel.ContainsKey(label))
-                        {
-                            SpraysLabel[label] = textToy.netId;
-                        }
-
-                        callback?.Invoke(textToy);
-                        return;
-                    }
-                }
+                callback?.Invoke(SpawnTextToy(player, label, image));
+                return;
             });
 
             callback?.Invoke(null);
@@ -97,16 +51,20 @@ namespace PixelSpray.API
             {
                 return false;
             }
-            NetworkServer.Destroy(component.gameObject);
+
             if (PlayerSprays.ContainsKey(sprayId))
             {
                 PlayerSprays.Remove(sprayId);
             }
+
             List<string> keysToRemove = SpraysLabel.Where(kvp => kvp.Value == sprayId).Select(kvp => kvp.Key).ToList();
+
             foreach (string key in keysToRemove)
             {
                 SpraysLabel.Remove(key);
             }
+
+            NetworkServer.Destroy(component.gameObject);
             return true;
         }
 
@@ -130,11 +88,57 @@ namespace PixelSpray.API
             return ids.Count;
         }
 
+        private static TextToy SpawnTextToy(Player player, string label, string image)
+        {
+            TextToy textToy = null;
+            foreach (GameObject value in NetworkClient.prefabs.Values)
+            {
+                if (value.TryGetComponent<TextToy>(out textToy))
+                {
+                    textToy = UnityEngine.Object.Instantiate(textToy);
+                    textToy.TextFormat = image;
+                    textToy.OnSpawned(player.ReferenceHub, new ArraySegment<string>(image.Split(' ')));
+                    player?.SendConsoleMessage(PixelSprayPlugin.Instance.Translation.SprayCommandSent, "");
+
+                    if (!PlayerSprays.ContainsKey(textToy.netId))
+                    {
+                        PlayerSprays[textToy.netId] = player;
+                    }
+                    int labelNameIndex = 0;
+
+                    while (SpraysLabel.ContainsKey(label))
+                    {
+                        labelNameIndex++;
+                        label = $"{label}({labelNameIndex})";
+                    }
+
+                    if (!SpraysLabel.ContainsKey(label))
+                    {
+                        SpraysLabel[label] = textToy.netId;
+                    }
+
+                }
+            }
+            return textToy;
+        }
+
         public static async Task<string> ConvertImage(string imageUrl)
         {
-            AsciiArtConverter _converter = new AsciiArtConverter();
-            string SprayFullCommand = await _converter.ProcessImageFromUrlAsync(imageUrl);
-            return SprayFullCommand;
+            try
+            {
+                AsciiArtConverter _converter = new AsciiArtConverter();
+                string SprayFullCommand = await _converter.ProcessImageFromUrlAsync(imageUrl);
+                return SprayFullCommand;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Log.Warn(string.Format(PixelSprayPlugin.Instance.Translation.ImageDownloadError, httpEx.Message?.ToString() ?? "Unknown"));
+                return string.Empty;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
         }
     }
 }

@@ -68,7 +68,7 @@ namespace PixelSpray.Commands.SprayCommands
                     {
                         dummy.Role.Set(RoleTypeId.Tutorial);
                         dummy.Teleport(player.Position);
-                        dummy.SetFakeScale(new Vector3(0.1f, 0.1f, 0.1f), Player.List);
+                        dummy.SetFakeScale(new Vector3(0.01f, 0.01f, 0.01f), Player.List);
 
                         textToy.transform.position = dummy.Position;
                         textToy.transform.rotation = dummy.Rotation;

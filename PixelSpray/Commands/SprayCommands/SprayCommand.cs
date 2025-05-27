@@ -20,8 +20,6 @@ namespace PixelSpray.Commands.SprayCommands
         public string[] Aliases { get; } = { "grf", "s" };
         public string Description { get; } = PixelSprayPlugin.Instance.Translation.SprayCommandDescription;
 
-        private readonly AsciiArtConverter _converter = new AsciiArtConverter();
-
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             Player player = Player.Get(sender);
