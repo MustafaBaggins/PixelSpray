@@ -1,8 +1,13 @@
 ﻿using AdminToys;
+using LabApi.Features.Wrappers;
+using MEC;
 using Mirror;
+using PixelSpray.Features;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using UnityEngine;
 using Utils.Networking;
 using Player = Exiled.API.Features.Player;
@@ -15,34 +20,75 @@ namespace PixelSpray.API
         public static Dictionary<uint, Player> PlayerSprays = new Dictionary<uint, Player>();
         public static Dictionary<string, uint> SpraysLabel = new Dictionary<string, uint>();
 
-        public static void AddPlayerSpray(Player player, string label, string image)
+        public async static Task AddPlayerSpray(Player player, string label, string imageUrl, Action<TextToy> callback)
         {
-            foreach (GameObject value in NetworkClient.prefabs.Values)
+            string image = string.Empty;
+            try
             {
-                if (value.TryGetComponent<TextToy>(out var textToy))
+                image = await ConvertImage(imageUrl);
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Timing.CallDelayed(0f, () =>
                 {
-                    textToy = UnityEngine.Object.Instantiate(textToy);
-                    textToy.TextFormat = image;
-                    textToy.OnSpawned(player.ReferenceHub, new ArraySegment<string>(image.Split(' ')));
-                    player?.SendConsoleMessage(PixelSprayPlugin.Instance.Translation.SprayCommandSent, "");
-                    if (!PlayerSprays.ContainsKey(textToy.netId))
+                    player?.SendConsoleMessage(string.Format(PixelSprayPlugin.Instance.Translation.ImageDownloadError, httpEx.Message?.ToString() ?? "Unknown"), "");
+                });
+                callback?.Invoke(null);
+                return;
+            }
+            catch (Exception)
+            {
+                callback?.Invoke(null);
+                return;
+            }
+
+            if (image.IsEmpty())
+            {
+                Timing.CallDelayed(0f, () =>
+                {
+                    player?.SendConsoleMessage(PixelSprayPlugin.Instance.Translation.SprayGeneralError, "");
+                });
+                callback?.Invoke(null);
+                return;
+            }
+
+            TextToy textToy = null;
+            Timing.CallDelayed(Timing.WaitForOneFrame, () =>
+            {
+                foreach (GameObject value in NetworkClient.prefabs.Values)
+                {
+                    if (value.TryGetComponent<TextToy>(out textToy))
                     {
-                        PlayerSprays[textToy.netId] = player;
-                    }
-                    if (!SpraysLabel.ContainsKey(label))
-                    {
-                        SpraysLabel[label] = textToy.netId;
+                        textToy = UnityEngine.Object.Instantiate(textToy);
+                        textToy.TextFormat = image;
+                        textToy.OnSpawned(player.ReferenceHub, new ArraySegment<string>(image.Split(' ')));
+                        player?.SendConsoleMessage(PixelSprayPlugin.Instance.Translation.SprayCommandSent, "");
+
+                        if (!PlayerSprays.ContainsKey(textToy.netId))
+                        {
+                            PlayerSprays[textToy.netId] = player;
+                        }
+
+                        int labelNameIndex = 0;
+
+                        while (SpraysLabel.ContainsKey(label))
+                        {
+                            labelNameIndex++;
+                            label = $"{label}({labelNameIndex})";
+                        }
+
+                        if (!SpraysLabel.ContainsKey(label))
+                        {
+                            SpraysLabel[label] = textToy.netId;
+                        }
+
+                        callback?.Invoke(textToy);
                         return;
                     }
-                    int labelNameIndex = 0;
-                    while (SpraysLabel.ContainsKey(label))
-                    {
-                        labelNameIndex++;
-                        label = $"{label}({labelNameIndex})";
-                    }
-                    SpraysLabel[label] = textToy.netId;
                 }
-            }
+            });
+
+            callback?.Invoke(null);
         }
 
         public static bool RemoveSprayById(uint sprayId)
@@ -82,6 +128,13 @@ namespace PixelSpray.API
                 RemoveSprayById(id);
             }
             return ids.Count;
+        }
+
+        public static async Task<string> ConvertImage(string imageUrl)
+        {
+            AsciiArtConverter _converter = new AsciiArtConverter();
+            string SprayFullCommand = await _converter.ProcessImageFromUrlAsync(imageUrl);
+            return SprayFullCommand;
         }
     }
 }

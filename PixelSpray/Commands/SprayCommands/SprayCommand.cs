@@ -1,4 +1,6 @@
-﻿using CommandSystem;
+﻿using AdminToys;
+using CommandSystem;
+using CommandSystem.Commands.RemoteAdmin.Dummies;
 using Exiled.API.Features;
 using Exiled.Permissions.Extensions;
 using MEC;
@@ -44,39 +46,7 @@ namespace PixelSpray.Commands.SprayCommands
 
             player?.SendConsoleMessage(initialMessage, "");
 
-            Task.Run(async () =>
-            {
-                try
-                {
-                    string SprayFullCommand = await _converter.ProcessImageFromUrlAsync(imageUrl);
-
-                    Timing.CallDelayed(0f, () =>
-                    {
-                        if (string.IsNullOrEmpty(SprayFullCommand))
-                        {
-                            player?.SendConsoleMessage(PixelSprayPlugin.Instance.Translation.SprayEmptyResult, "");
-                            return;
-                        }
-
-                        SprayManager.AddPlayerSpray(player, label, SprayFullCommand);
-                    });
-                }
-                catch (HttpRequestException httpEx)
-                {
-                    Timing.CallDelayed(0f, () =>
-                    {
-                        player?.SendConsoleMessage(string.Format(PixelSprayPlugin.Instance.Translation.ImageDownloadError, httpEx.Message?.ToString() ?? "Unknown"), "");
-                    });
-                }
-                catch (Exception)
-                {
-                    Timing.CallDelayed(0f, () =>
-                    {
-                        player?.SendConsoleMessage(PixelSprayPlugin.Instance.Translation.SprayGeneralError, "");
-                    });
-                }
-            });
-
+            _ = SprayManager.AddPlayerSpray(player, label, imageUrl, null);
 
             if (!string.IsNullOrWhiteSpace(time))
             {
@@ -85,7 +55,6 @@ namespace PixelSpray.Commands.SprayCommands
                     Timing.CallPeriodically(result, result, null, () => SprayManager.RemoveSprayByLabel(label));
                 }
             }
-
             response = PixelSprayPlugin.Instance.Translation.SprayRequestBackground;
             return true;
         }

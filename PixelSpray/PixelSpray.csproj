@@ -14,9 +14,6 @@
 		<Reference Include="Assembly-CSharp-firstpass">
 		  <HintPath>$(EXILED_REFERENCES)\Assembly-CSharp-firstpass.dll</HintPath>
 		</Reference>
-		<Reference Include="Assembly-CSharp">
-		  <HintPath>$(EXILED_REFERENCES)\Assembly-CSharp.dll</HintPath>
-		</Reference>
 		<Reference Include="Mirror">
 		  <HintPath>$(EXILED_REFERENCES)\Mirror.dll</HintPath>
 		</Reference>

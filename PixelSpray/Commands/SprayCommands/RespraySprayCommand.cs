@@ -44,7 +44,7 @@ namespace PixelSpray.Commands.SprayCommands
 
             string label = SprayManager.SpraysLabel.Where(kvp1 => kvp1.Value == id).Select(kvp1 => kvp1.Key).First();
 
-            SprayManager.AddPlayerSpray(player, label, component.TextFormat);
+            _ = SprayManager.AddPlayerSpray(player, label, component.TextFormat, null);
 
             response = $"{PixelSprayPlugin.Instance.Translation.SprayCommandSent} - {input}.";
             return false;

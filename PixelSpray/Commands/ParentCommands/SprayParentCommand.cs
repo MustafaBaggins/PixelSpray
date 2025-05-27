@@ -2,6 +2,7 @@
 using PixelSpray;
 using PixelSpray.Commands;
 using PixelSpray.Commands.SprayCommands;
+using PixelSpray.Commands.SprayCommands.PixelSpray.Commands.SprayCommands;
 using System;
 
 namespace Callvote.Commands
@@ -21,6 +22,7 @@ namespace Callvote.Commands
         public override void LoadGeneratedCommands()
         {
             RegisterCommand(new SprayCommand());
+            RegisterCommand(new NextBotCommand());
             RegisterCommand(new RemoveSprayCommand());
             RegisterCommand(new ListSprayCommand());
             RegisterCommand(new RespraySprayCommand());
