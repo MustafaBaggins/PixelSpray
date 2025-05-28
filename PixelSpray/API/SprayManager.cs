@@ -36,9 +36,10 @@ namespace PixelSpray.API
                 });
             }
 
-            Timing.CallDelayed(Timing.WaitForOneFrame, () =>
+            Timing.CallDelayed(0f, () =>
             {
-                callback?.Invoke(SpawnTextToy(player, label, image));
+                TextToy a = SpawnTextToy(player, label, image);
+                callback?.Invoke(a);
                 return;
             });
 
