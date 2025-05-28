@@ -44,7 +44,7 @@ namespace PixelSpray.Commands.SprayCommands
 
             player?.SendConsoleMessage(initialMessage, "");
 
-            _ = SprayManager.AddPlayerSpray(player, label, imageUrl, null);
+            _ = SprayManager.AddPlayerSprayByUrl(player, label, imageUrl, null);
 
             if (!string.IsNullOrWhiteSpace(time))
             {

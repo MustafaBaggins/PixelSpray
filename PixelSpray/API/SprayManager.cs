@@ -22,28 +22,33 @@ namespace PixelSpray.API
         public static Dictionary<uint, Player> PlayerSprays = new Dictionary<uint, Player>();
         public static Dictionary<string, uint> SpraysLabel = new Dictionary<string, uint>();
 
-        public async static Task AddPlayerSpray(Player player, string label, string imageUrl, Action<TextToy> callback)
+        public async static Task AddPlayerSprayByUrl(Player player, string label, string imageUrl, Action<TextToy> callback)
         {
             string image = await ConvertImage(imageUrl);
-
-            if (image.IsEmpty())
-            {
-                Timing.CallDelayed(0f, () =>
-                {
-                    player?.SendConsoleMessage(PixelSprayPlugin.Instance.Translation.SprayGeneralError, "");
-                    callback?.Invoke(null);
-                    return;
-                });
-            }
+            TextToy textToy = null;
 
             Timing.CallDelayed(0f, () =>
             {
-                TextToy a = SpawnTextToy(player, label, image);
-                callback?.Invoke(a);
-                return;
+                TextToy textToy = AddPlayerSprayByConvertedImage(player, label, image);
             });
 
+            if (textToy != null)
+            {
+                callback?.Invoke(textToy);
+                return;
+            }
+
             callback?.Invoke(null);
+        }
+
+        public static TextToy AddPlayerSprayByConvertedImage(Player player, string label, string image)
+        {
+            if (image.IsEmpty())
+            {
+                return null ;
+            }
+
+            return SpawnTextToy(player, label, image);
         }
 
         public static bool RemoveSprayById(uint sprayId)
@@ -127,8 +132,7 @@ namespace PixelSpray.API
         {
             try
             {
-                AsciiArtConverter _converter = new AsciiArtConverter();
-                string SprayFullCommand = await _converter.ProcessImageFromUrlAsync(imageUrl);
+                string SprayFullCommand = await AsciiArtConverter.ProcessImageFromUrl(imageUrl);
                 return SprayFullCommand;
             }
             catch (HttpRequestException httpEx)

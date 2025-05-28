@@ -1,6 +1,7 @@
 ﻿using CommandSystem;
 using PixelSpray;
 using PixelSpray.Commands;
+using PixelSpray.Commands.ParentCommands;
 using PixelSpray.Commands.SprayCommands;
 using PixelSpray.Commands.SprayCommands.PixelSpray.Commands.SprayCommands;
 using System;
@@ -9,7 +10,7 @@ namespace Callvote.Commands
 {
     [CommandHandler(typeof(ClientCommandHandler))]
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
-    public class CallVoteCommand : ParentCommand
+    public class ParentSprayCommand : ParentCommand
     {
         public override string Command => "pixelspray";
 
@@ -17,7 +18,7 @@ namespace Callvote.Commands
 
         public override string Description => PixelSprayPlugin.Instance.Translation.SprayCommandDescription;
 
-        public CallVoteCommand() => LoadGeneratedCommands();
+        public ParentSprayCommand() => LoadGeneratedCommands();
 
         public override void LoadGeneratedCommands()
         {

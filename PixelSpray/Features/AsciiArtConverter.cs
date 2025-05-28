@@ -1,4 +1,5 @@
 ﻿using Exiled.API.Features;
+using PixelSpray.Extensions;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -12,26 +13,17 @@ namespace PixelSpray.Features
 {
     public class AsciiArtConverter
     {
-        private static readonly List<string> DefaultHtmlCharacter = new List<string> { "█" };
-        private const string BrowserTypeForAspectRatio = "other";
-        private const int GrayscaleMode = 0;
-        private const string OriginalFontHtmlStartTag = "<b style=\"color:";
-        private const string OriginalFontHtmlEndTag = "</b>";
+        public static readonly List<string> DefaultHtmlCharacter = new List<string> { "█" };
+        public static int GrayscaleMode = 0;
+        public static string OriginalFontHtmlStartTag = "<b style=\"color:";
+        public static string OriginalFontHtmlEndTag = "</b>";
 
         private class ConverterState
         {
             public int TextTypeCount { get; set; } = -1;
         }
 
-        private static string NextCharacter(List<string> htmlCharacter, ConverterState state)
-        {
-            if (htmlCharacter.Count == 1) return htmlCharacter[0];
-            state.TextTypeCount++;
-            if (state.TextTypeCount >= htmlCharacter.Count) state.TextTypeCount = 0;
-            return htmlCharacter[state.TextTypeCount];
-        }
-
-        public async Task<string> ProcessImageFromUrlAsync(string imageUrl)
+        public static async Task<string> ProcessImageFromUrl(string imageUrl)
         {
             byte[] imageBytes;
 
@@ -41,18 +33,23 @@ namespace PixelSpray.Features
                 imageBytes = await httpClient.GetByteArrayAsync(imageUrl).ConfigureAwait(false);
             }
 
-            string rawHtmlOutput = ConvertImageToHtml(imageBytes);
-            if (string.IsNullOrEmpty(rawHtmlOutput))
-                throw new Exception("C# based converter did not produce output.");
-
-
-
-            string finalResult = FormatHtmlOutput(rawHtmlOutput);
-
-            return finalResult;
+            return ProcessImageFromBytes(imageBytes);
         }
 
-        private string ConvertImageToHtml(byte[] imageData)
+        public static string ProcessImageFromBytes(byte[] imageBytes)
+        {
+            string rawHtmlOutput = ConvertImageToHtml(imageBytes);
+
+            if (string.IsNullOrEmpty(rawHtmlOutput))
+            {
+                throw new Exception("C# based converter did not produce output.");
+            }
+
+            return FormatHtmlOutput(rawHtmlOutput);
+        }
+
+
+        private static string ConvertImageToHtml(byte[] imageData)
         {
             StringBuilder htmlBuilder = new StringBuilder();
             ConverterState state = new ConverterState();
@@ -69,30 +66,8 @@ namespace PixelSpray.Features
 
             using (image)
             {
-                int originalWidth = image.Width;
-                int originalHeight = image.Height;
-                if (originalWidth == 0 || originalHeight == 0)
-                    throw new InvalidOperationException("The width or height of the image cannot be zero.");
-
-                int newHeightBasedOnWidth = (int)Math.Round((double)originalHeight * PixelSprayPlugin.Instance.Config.DefaultImageWidth / originalWidth);
-                if (newHeightBasedOnWidth == 0 && originalHeight > 0) newHeightBasedOnWidth = 1;
-
-                image.Mutate(x => x.Resize(PixelSprayPlugin.Instance.Config.DefaultImageWidth, newHeightBasedOnWidth == 0 ? 1 : newHeightBasedOnWidth));
-
-                double aspectRatioScaleY = BrowserTypeForAspectRatio == "ie" ? 0.65 : 0.43;
-                int finalHeight = (int)Math.Round(image.Height * aspectRatioScaleY);
-                if (finalHeight == 0 && image.Height > 0) finalHeight = 1;
-
-                if (image.Width > 0 && finalHeight > 0)
-                    image.Mutate(x => x.Resize(image.Width, finalHeight));
-                else if (finalHeight == 0)
-                {
-
-                    image.Mutate(x => x.Resize(image.Width, 1));
-                }
-
-                if (GrayscaleMode == 1) image.Mutate(x => x.Grayscale());
-                else if (GrayscaleMode == 2) image.Mutate(x => x.Grayscale().BinaryThreshold(0.5f));
+                image.ResizeImage();
+                image.SetGrayScaleMode(GrayscaleMode);
 
                 int width = image.Width;
                 int height = image.Height;
@@ -127,7 +102,15 @@ namespace PixelSpray.Features
             return htmlBuilder.ToString();
         }
 
-        private string FormatHtmlOutput(string htmlInput)
+        private static string NextCharacter(List<string> htmlCharacter, ConverterState state)
+        {
+            if (htmlCharacter.Count == 1) return htmlCharacter[0];
+            state.TextTypeCount++;
+            if (state.TextTypeCount >= htmlCharacter.Count) state.TextTypeCount = 0;
+            return htmlCharacter[state.TextTypeCount];
+        }
+
+        private static string FormatHtmlOutput(string htmlInput)
         {
             string text = htmlInput;
             text = text.Replace(OriginalFontHtmlStartTag, "<color=");

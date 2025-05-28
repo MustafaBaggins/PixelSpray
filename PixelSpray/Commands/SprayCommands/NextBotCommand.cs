@@ -53,7 +53,7 @@ namespace PixelSpray.Commands.SprayCommands
                     return false;
                 }
 
-                _ = SprayManager.AddPlayerSpray(player, "NextBot", imageUrl, textToy =>
+                _ = SprayManager.AddPlayerSprayByUrl(player, "NextBot", imageUrl, textToy =>
                 {
                     if (textToy == null)
                     {
