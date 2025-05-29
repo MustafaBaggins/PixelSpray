@@ -39,12 +39,11 @@ namespace PixelSpray.Features
             foreach (string file in Directory.GetFiles(imagePath, "*.png"))
             {
                 string label = Path.GetFileNameWithoutExtension(file);
-                byte[] imageBytes = File.ReadAllBytes(file);
-
-                string formatedImage = AsciiArtConverter.ProcessImageFromBytes(imageBytes);
 
                 if (!StaticSprays.ContainsKey(label))
                 {
+                    byte[] imageBytes = File.ReadAllBytes(file);
+                    string formatedImage = AsciiArtConverter.ProcessImageFromBytes(imageBytes);     
                     StaticSprays.Add(label, formatedImage);
                 }
             }

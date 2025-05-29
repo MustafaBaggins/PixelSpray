@@ -25,11 +25,17 @@ namespace PixelSpray.API
         public async static Task AddPlayerSprayByUrl(Player player, string label, string imageUrl, Action<TextToy> callback)
         {
             string image = await ConvertImage(imageUrl);
-            TextToy textToy = null;
+
+            TextToy textToy = AddPlayerSprayByConvertedImage(player, label, image);
+            callback?.Invoke(textToy);
+            return;
+
+
 
             Timing.CallDelayed(0f, () =>
             {
                 TextToy textToy = AddPlayerSprayByConvertedImage(player, label, image);
+                Log.Info(textToy == null);
             });
 
             if (textToy != null)
@@ -45,7 +51,7 @@ namespace PixelSpray.API
         {
             if (image.IsEmpty())
             {
-                return null ;
+                return null;
             }
 
             return SpawnTextToy(player, label, image);
@@ -122,7 +128,7 @@ namespace PixelSpray.API
                     {
                         SpraysLabel[label] = textToy.netId;
                     }
-
+                    return textToy;
                 }
             }
             return textToy;
